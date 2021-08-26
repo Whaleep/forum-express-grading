@@ -16,6 +16,7 @@ module.exports = (app, passport) => {
       if (req.user.isAdmin) { return next() }
       return res.redirect('/')
     }
+    res.redirect('/signin')
   }
 
   // 前台入口
