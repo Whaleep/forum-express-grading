@@ -3,6 +3,7 @@ const handlebars = require('express-handlebars')
 const db = require('./models')
 const flash = require('connect-flash')
 const session = require('express-session')
+const methodOverride = require('method-override')
 const passport = require('./config/passport')
 
 const app = express()
@@ -12,15 +13,14 @@ const port = 3000
 // express-handlebars 在 2019/5/15 v3.1.0 之後，{defaultLayout: 'main'}已經是預設值
 app.engine('handlebars', handlebars({ defaultLayout: 'main' }))
 app.set('view engine', 'handlebars')
-// setup bodyParser
+// setup bodyParser, session, passport, flash, method-override
 app.use(express.urlencoded({ extended: true }))
-// setup session
 app.use(session({ secret: 'secret', resave: false, saveUninitialized: false }))
-// setup passport
 app.use(passport.initialize())
 app.use(passport.session())
-// setup flash
 app.use(flash())
+app.use(methodOverride('_method'))
+
 // 把 req.flash 放到 res.locals 裡面
 app.use((req, res, next) => {
   res.locals.success_messages = req.flash('success_messages')
