@@ -2,6 +2,9 @@ const express = require('express')
 const handlebars = require('express-handlebars')
 const db = require('./models')
 const flash = require('connect-flash')
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
 const session = require('express-session')
 const methodOverride = require('method-override')
 const passport = require('./config/passport')
