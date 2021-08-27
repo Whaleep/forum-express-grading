@@ -1,7 +1,7 @@
 {{#if restaurant}}
-  <form action="/admin/restaurants/{{restaurant.id}}?_method=PUT" method="POST">
+  <form action="/admin/restaurants/{{restaurant.id}}?_method=PUT" method="POST" enctype="multipart/form-data">
 {{else}}
-  <form action="/admin/restaurants" method="POST">
+  <form action="/admin/restaurants" method="POST" enctype="multipart/form-data">
 {{/if}}
   <div class="mb-3">
     <label for="name" class="form-label">Name</label>
@@ -27,6 +27,11 @@
     <label for="description" class="form-label">Description</label>
     <textarea class="form-control" id="description" name="description" rows="3">{{restaurant.description}}</textarea>
   </div>
+
+  <div class="mb-3">
+    <label for="image" class="form-label">Image</label>
+    <input type="file" class="form-control-file" id="image" name="image">
+  </div>  
 
   <button type="submit" class="btn btn-primary">Submit</button>
 </form>
