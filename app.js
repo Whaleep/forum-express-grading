@@ -7,7 +7,7 @@ const methodOverride = require('method-override')
 const passport = require('./config/passport')
 
 const app = express()
-const port = 3000
+const port = process.env.PORT || 3000
 
 // 設定 view engine 使用 handlebars
 // express-handlebars 在 2019/5/15 v3.1.0 之後，{defaultLayout: 'main'}已經是預設值
