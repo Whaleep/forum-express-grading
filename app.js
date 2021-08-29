@@ -14,7 +14,10 @@ const port = process.env.PORT || 3000
 
 // 設定 view engine 使用 handlebars
 // express-handlebars 在 2019/5/15 v3.1.0 之後，{defaultLayout: 'main'}已經是預設值
-app.engine('handlebars', handlebars({ defaultLayout: 'main' }))
+app.engine('handlebars', handlebars({
+  defaultLayout: 'main',
+  helpers: require('./config/handlebars-helpers')
+}))
 app.set('view engine', 'handlebars')
 // setup bodyParser, session, passport, flash, method-override
 app.use(express.urlencoded({ extended: true }))

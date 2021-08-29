@@ -9,6 +9,17 @@
   </div>
 
   <div class="mb-3">
+    <label for="categoryId" class="form-label">Category</label>
+    <select class="form-control" name="categoryId" id="categoryId">
+      {{#each categories}}
+      <option value="{{this.id}}" {{#ifCond this.id ../restaurant.CategoryId}} selected {{/ifCond}}>
+        {{this.name}}
+      </option>
+      {{/each}}
+    </select>
+  </div>
+
+  <div class="mb-3">
     <label for="tel" class="form-label">Tel</label>
     <input type="text" class="form-control" name="tel" id="tel" placeholder="Enter tel" value="{{restaurant.tel}}">
   </div>
