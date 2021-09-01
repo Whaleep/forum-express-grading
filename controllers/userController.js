@@ -1,6 +1,9 @@
+const helpers = require('../_helpers')
 const bcrypt = require('bcryptjs')
 const db = require('../models')
 const User = db.User
+const imgur = require('imgur-node-api')
+const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 
 const userController = {
   // 註冊頁面
@@ -46,6 +49,59 @@ const userController = {
     req.flash('success_messages', '登出成功！')
     req.logout()
     res.redirect('/signin')
+  },
+  // 瀏覽 Profile
+  getUser: (req, res) => {
+    return User.findByPk(req.params.id)
+      .then(profile => res.render('user/profile', { profile: profile.toJSON() }))
+      .catch(error => res.status(422).json(error))
+  },
+  // 瀏覽編輯 Profile 頁面
+  editUser: (req, res) => {
+    const getUser = helpers.getUser(req)
+    // 依規格只能改自己的資料。理論上這樣可以不用在路由帶入:id ?
+    if (getUser.id !== Number(req.params.id)) {
+      return res.redirect(`/users/${getUser.id}/edit`)
+    }
+    // 如果需要帶入自己以外的使用者，再使用 User.findByPk(req.params.id) 帶入
+    res.render('user/edit')
+  },
+  // 編輯 Profile
+  putUser: (req, res) => {
+    const getUser = helpers.getUser(req)
+    const id = Number(req.params.id)
+    const name = req.body.name
+
+    if (getUser.id !== id) {
+      return res.redirect(`/users/${getUser.id}/edit`)
+    }
+    if (!name) {
+      req.flash('error_messages', 'name didn\'t exist')
+      return res.redirect('back')
+    }
+
+    const { file } = req
+    if (file) {
+      imgur.setClientID(IMGUR_CLIENT_ID)
+      imgur.upload(file.path, (err, img) => {
+        return User.findByPk(id)
+          .then(profile => profile.update({ name, image: file ? img.data.link : profile.image }))
+          .then(profile => {
+            req.flash('success_messages', 'profile was successfully to update')
+            return res.redirect(`/users/${getUser.id}`)
+          })
+          .catch(error => res.status(422).json(error))
+      })
+    }
+    else {
+      return User.findByPk(id)
+        .then(profile => profile.update({ name, image: profile.image }))
+        .then(profile => {
+          req.flash('success_messages', 'profile was successfully to update')
+          return res.redirect(`/users/${helpers.getUser(req).id}`)
+        })
+        .catch(error => res.status(422).json(error))
+    }
   }
 }
 

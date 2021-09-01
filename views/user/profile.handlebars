@@ -1,0 +1,14 @@
+<div class="card ">
+  <div class="row">
+    <div class="col-auto">
+      <img class="img-responsive center-block" src="{{profile.image}}" style="width: 250px;">
+    </div>
+    <div class="col-auto p-4">
+      <h3>{{profile.name}}</h3>
+      <p>{{profile.email}}</p>
+      {{#ifCond user.id profile.id}}
+      <a href="/users/{{user.id}}/edit" class="btn btn-primary">edit</a>
+      {{/ifCond}}
+    </div>
+  </div>
+</div>
