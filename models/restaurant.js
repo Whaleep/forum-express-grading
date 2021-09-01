@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       // 增加 restaurant.Category 關聯方法
       Restaurant.belongsTo(models.Category)
+      Restaurant.hasMany(models.Comment)
     }
   };
   Restaurant.init({
