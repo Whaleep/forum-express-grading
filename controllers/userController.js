@@ -2,6 +2,8 @@ const helpers = require('../_helpers')
 const bcrypt = require('bcryptjs')
 const db = require('../models')
 const User = db.User
+const Comment = db.Comment
+const Restaurant = db.Restaurant
 const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 
@@ -52,8 +54,20 @@ const userController = {
   },
   // 瀏覽 Profile
   getUser: (req, res) => {
-    return User.findByPk(req.params.id)
-      .then(profile => res.render('user/profile', { profile: profile.toJSON() }))
+    return Promise.all([
+      User.findByPk(req.params.id),
+      Comment.findAndCountAll({
+        where: { Userid: req.params.id }, attributes: ['RestaurantId'], group: ['RestaurantId'], include: Restaurant,
+        raw: true, nest: true
+      }),
+    ])
+      .then(values => {
+        const [profile, comments] = values
+        return res.render('user/profile', {
+          profile: profile.toJSON(),
+          commentedRestCount: comments.count.length, commentedRestaurants: comments.rows
+        })
+      })
       .catch(error => res.status(422).json(error))
   },
   // 瀏覽編輯 Profile 頁面
