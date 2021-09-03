@@ -12,6 +12,12 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       User.hasMany(models.Comment)
+      // 設定 user.FavoritedRestaurants 方法，可以直接從 user 實例取到使用者收藏的所有餐廳
+      User.belongsToMany(models.Restaurant, {
+        through: models.Favorite,
+        foreignKey: 'UserId',
+        as: 'FavoritedRestaurants'
+      })
     }
   };
   User.init({

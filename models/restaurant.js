@@ -14,6 +14,12 @@ module.exports = (sequelize, DataTypes) => {
       // 增加 restaurant.Category 關聯方法
       Restaurant.belongsTo(models.Category)
       Restaurant.hasMany(models.Comment)
+      // 設定 restaurants.FavoritedUsers 方法，可以直接從 restaurant 實例取到收藏該餐廳的所有使用者
+      Restaurant.belongsToMany(models.User, {
+        through: models.Favorite,
+        foreignKey: 'RestaurantId',
+        as: 'FavoritedUsers'
+      })
     }
   };
   Restaurant.init({
