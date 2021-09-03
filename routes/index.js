@@ -35,10 +35,11 @@ module.exports = (app, passport) => {
     res.redirect('restaurants')
   })
 
-  //在 /restaurants 底下則交給 restController.getRestaurants 來處理
+  //在 /restaurants 底下則交給 restController 來處理
   app.get('/restaurants', authenticated, restController.getRestaurants)
   app.get('/restaurants/feeds', authenticated, restController.getFeeds)
   app.get('/restaurants/:id', authenticated, restController.getRestaurant)
+  app.get('/restaurants/:id/dashboard', authenticated, restController.getDashboard)
 
   app.post('/comments', authenticated, commentController.postComment)
   app.delete('/comments/:id', authenticatedAdmin, commentController.deleteComment)
@@ -47,7 +48,7 @@ module.exports = (app, passport) => {
   app.get('/admin', authenticatedAdmin, (req, res) => {
     res.redirect('/admin/restaurants')
   })
-  // 在 /admin 底下則交給 adminController.getRestaurants 處理
+  // 在 /admin 底下則交給 adminController 處理
   app.get('/admin/restaurants', authenticatedAdmin, adminController.getRestaurants)
   app.get('/admin/restaurants/create', authenticatedAdmin, adminController.createRestaurant)
   app.post('/admin/restaurants', authenticatedAdmin, upload.single('image'), adminController.postRestaurant)
