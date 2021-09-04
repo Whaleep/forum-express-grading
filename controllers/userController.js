@@ -57,18 +57,23 @@ const userController = {
   },
   // 瀏覽 Profile
   getUser: (req, res) => {
+    const UserId = Number(req.params.id)
     return Promise.all([
-      User.findByPk(req.params.id),
+      User.findByPk(UserId, {
+        include: [
+          { model: User, as: 'Followings' },
+          { model: User, as: 'Followers' },
+          { model: Restaurant, as: 'FavoritedRestaurants' }
+        ]
+      }),
       Comment.findAndCountAll({
-        where: { Userid: req.params.id }, attributes: ['RestaurantId'], group: ['RestaurantId'], include: Restaurant,
+        where: { UserId }, attributes: ['RestaurantId'], group: ['RestaurantId'], include: Restaurant,
         raw: true, nest: true
       }),
     ])
       .then(([profile, comments]) => {
-        return res.render('user/profile', {
-          profile: profile.toJSON(),
-          commentedRestCount: comments.count.length, commentedRestaurants: comments.rows
-        })
+        const isFollowed = helpers.getUser(req).Followings.map(d => d.id).includes(UserId)
+        return res.render('user/profile', { profile: profile.toJSON(), commentedRestaurants: comments.rows, isFollowed })
       })
       .catch(error => res.status(422).json(error))
   },
@@ -159,11 +164,11 @@ const userController = {
 
   addFollowing: (req, res) => {
     return Followship.create({ followerId: req.user.id, followingId: req.params.userId })
-    .then((followship)=>{return res.redirect('back')})
+      .then((followship) => { return res.redirect('back') })
   },
 
-  removeFollowing: (req,res)=>{
-    return Followship.findOne({ where: { followerId: req.user.id, followingId: req.params.userId }})
+  removeFollowing: (req, res) => {
+    return Followship.findOne({ where: { followerId: req.user.id, followingId: req.params.userId } })
       .then((followship) => {
         followship.destroy()
           .then((followship) => { return res.redirect('back') })

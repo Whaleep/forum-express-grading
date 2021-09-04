@@ -6,25 +6,89 @@
     <div class="col-auto p-4">
       <h3>{{profile.name}}</h3>
       <p>{{profile.email}}</p>
-      <p>{{commentedRestCount}} 已評論餐廳</p>
+      <ul class="list-unstyled">
+        <li><strong>{{commentedRestaurants.length}}</strong> 已評論餐廳</li>
+        <li><strong>{{profile.FavoritedRestaurants.length}}</strong> 收藏的餐廳</li>
+        <li><strong>{{profile.Followings.length}}</strong> followings (追蹤者)</li>
+        <li><strong>{{profile.Followers.length}}</strong> followers (追隨者)</li>
+      </ul>
       {{#ifCond user.id profile.id}}
       <a href="/users/{{user.id}}/edit" class="btn btn-primary">edit</a>
+      {{else}}
+      {{#if isFollowed }}
+      <form action="/following/{{profile.id}}?_method=DELETE" method="POST" style="display: contents;"><button type="submit" class="btn btn-danger">取消追蹤</button></form>
+      {{else}}
+      <form action="/following/{{profile.id}}" method="POST" style="display: contents;"><button type="submit" class="btn btn-primary">追蹤</button></form>
+      {{/if}}
       {{/ifCond}}
     </div>
   </div>
 </div>
 
-<div class="card">
-  <div class="card-header"> {{commentedRestCount}} 已評論餐廳 </div>
-  <div class="card-body">
-    <div class="row row-cols-auto gy-3">
-      {{#each commentedRestaurants}}
-      <div class="col">
-        <a href="/restaurants/{{this.RestaurantId}}">
-          <img class="img-responsive center-block" src="{{this.Restaurant.image}}" style="width: 68px;">
-        </a>
+<div class="row g-3">
+  <div class="col-4">
+    <div class="card">
+      <div class="card-header"> {{profile.Followings.length}} followings (追蹤者) </div>
+      <div class="card-body">
+        <div class="row row-cols-auto g-3">
+          {{#each profile.Followings}}
+          <div class="col">
+            <a href="/users/{{this.id}}">
+              <img class="img-responsive center-block" src="{{this.image}}" style="width: 68px;">
+            </a>
+          </div>
+          {{/each}}
+        </div>
       </div>
-      {{/each}}
+    </div>
+  </div>
+  <div class="col-8">
+    <div class="card">
+      <div class="card-header"> {{commentedRestaurants.length}} 已評論餐廳 </div>
+      <div class="card-body">
+        <div class="row row-cols-auto g-3">
+          {{#each commentedRestaurants}}
+          <div class="col">
+            <a href="/restaurants/{{this.RestaurantId}}">
+              <img class="img-responsive center-block" src="{{this.Restaurant.image}}" style="width: 68px;">
+            </a>
+          </div>
+          {{/each}}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-4">
+    <div class="card">
+      <div class="card-header"> {{profile.Followers.length}} followers (追隨者) </div>
+      <div class="card-body">
+        <div class="row row-cols-auto g-3">
+          {{#each profile.Followers}}
+          <div class="col">
+            <a href="/users/{{this.id}}">
+              <img class="img-responsive center-block" src="{{this.image}}" style="width: 68px;">
+            </a>
+          </div>
+          {{/each}}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-8">
+    <div class="card">
+      <div class="card-header"> {{profile.FavoritedRestaurants.length}} 收藏的餐廳 </div>
+      <div class="card-body">
+        <div class="row row-cols-auto g-3">
+          {{#each profile.FavoritedRestaurants}}
+          <div class="col">
+            <a href="/restaurants/{{this.id}}">
+              <img class="img-responsive center-block" src="{{this.image}}" style="width: 68px;">
+            </a>
+          </div>
+          {{/each}}
+        </div>
+      </div>
     </div>
   </div>
 </div>
