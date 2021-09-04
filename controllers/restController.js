@@ -1,9 +1,11 @@
 // 前台入口
 const helpers = require('../_helpers')
+const sequelize = require('sequelize')
 const db = require('../models')
 const Restaurant = db.Restaurant
 const Category = db.Category
 const Comment = db.Comment
+const Favorite = db.Favorite
 const User = db.User
 
 const pageLimit = 10
@@ -75,6 +77,26 @@ const restController = {
       .then(([restaurants, comments]) => {
         return res.render('feeds', { restaurants: restaurants, comments: comments })
       })
+  },
+
+  getTopRestaurants: (req, res) => {
+    Favorite.findAll({
+      attributes: ['RestaurantId', [sequelize.fn('COUNT', sequelize.col('RestaurantId')), 'count']],
+      include: Restaurant,
+      group: ['RestaurantId'],
+      order: [[sequelize.col('count'), 'DESC']],
+      limit: 10, raw: true, nest: true
+    })
+      .then(restaurants => {
+        const data = restaurants.map(r => ({
+          count: r.count,
+          ...r.Restaurant,
+          description: r.Restaurant.description.substring(0, 100),
+          isFavorited: helpers.getUser(req).FavoritedRestaurants.map(d => d.id).includes(r.Restaurant.id)
+        }))
+        return res.render('topRestaurants', { restaurants: data })
+      })
+      .catch(error => res.status(422).json(error))
   }
 }
 module.exports = restController
