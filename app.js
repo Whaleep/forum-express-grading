@@ -43,8 +43,7 @@ app.listen(port, () => {
 })
 
 // 引入 routes 並將 app 傳進去，讓 routes 可以用 app 這個物件來指定路由
-// 把 passport 傳入 routes
-require('./routes')(app, passport)
+require('./routes')(app)
 
 // 導入自動化測試以後，由於測試環境會用到app，所以需要在文件最下方輸出app
 module.exports = app
