@@ -163,6 +163,7 @@ const userController = {
   },
 
   addFollowing: (req, res) => {
+    if (req.user.id === Number(req.params.userId)) { return res.redirect('back') }
     return Followship.create({ followerId: req.user.id, followingId: req.params.userId })
       .then((followship) => { return res.redirect('back') })
   },
