@@ -21,6 +21,7 @@ app.engine('handlebars', handlebars({
 app.set('view engine', 'handlebars')
 // setup bodyParser, session, passport, flash, method-override
 app.use(express.urlencoded({ extended: true }))
+app.use(express.json())
 app.use(session({ secret: 'secret', resave: false, saveUninitialized: false }))
 app.use(passport.initialize())
 app.use(passport.session())
