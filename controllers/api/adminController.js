@@ -19,6 +19,10 @@ const adminController = {
   postRestaurant: (req, res) => {
     adminService.postRestaurant(req, res, (data) => res.json(data))
   },
+  // 編輯一筆:執行
+  putRestaurant: (req, res) => {
+    adminService.putRestaurant(req, res, (data) => res.json(data))
+  },
   // 刪除一筆
   deleteRestaurant: (req, res) => {
     adminService.deleteRestaurant(req, res, (data) => res.json(data))

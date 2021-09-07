@@ -13,6 +13,37 @@ const categoryService = {
           callback({ categories: categories })
         }
       })
+  },
+  // 新增一筆分類
+  postCategory: (req, res, callback) => {
+    if (!req.body.name) {
+      callback({ status: 'error', message: 'name didn\'t exist' })
+    } else {
+      return Category.create({ name: req.body.name })
+        .then((category) =>
+          callback({ status: 'success', message: '' })
+        )
+    }
+  },
+
+  putCategory: (req, res, callback) => {
+    if (!req.body.name) {
+      callback({ status: 'error', message: 'name didn\'t exist' })
+    } else {
+      Category.findByPk(req.params.id)
+        .then((category) => {
+          category.update(req.body)
+            .then((category) => callback({ status: 'success', message: '' }))
+        })
+    }
+  },
+
+  deleteCategory: (req, res, callback) => {
+    Category.findByPk(req.params.id)
+      .then((category) => {
+        category.destroy()
+          .then((category) => { callback({ status: 'success', message: '' }) })
+      })
   }
 }
 
