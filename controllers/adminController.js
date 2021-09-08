@@ -1,10 +1,7 @@
 // 後台入口
 const db = require('../models')
 const Restaurant = db.Restaurant
-const User = db.User
 const Category = db.Category
-const imgur = require('imgur-node-api')
-const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 
 const adminService = require('../services/adminService.js')
 
@@ -67,26 +64,16 @@ const adminController = {
 
   // 使用者清單
   getUsers: (req, res) => {
-    User.findAll({ raw: true, nest: true })
-      .then(users => res.render('admin/users', { users }))
-      .catch(error => res.status(422).json(error))
+    adminService.getUsers(req, res, (data) => res.render('admin/users', data))
   },
 
   toggleAdmin: (req, res) => {
-    const id = Number(req.params.id)
-    // 考量到切換 admin 本身需要 admin role，可以預設使用者不能切換自己的 admin，但會導致 A17-test 失敗，故先取消
-    // if (id === req.user.id) {
-    //   req.flash('error_messages', `not available to toggle user's own role`)
-    //   return res.redirect('/admin/users')
-    // }
-
-    User.findByPk(id)
-      .then(user => user.update({ isAdmin: !user.isAdmin }))
-      .then(user => {
-        req.flash('success_messages', 'user was successfully to update')
+    adminService.toggleAdmin(req, res, (data) => {
+      if (data['status'] === 'success') {
+        req.flash('success_messages', data['message'])
         res.redirect('/admin/users')
-      })
-      .catch(error => res.status(422).json(error))
+      }
+    })
   }
 }
 

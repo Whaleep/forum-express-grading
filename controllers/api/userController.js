@@ -2,6 +2,8 @@ const bcrypt = require('bcryptjs')
 const db = require('../../models')
 const User = db.User
 
+const userService = require('../../services/userService')
+
 // JWT
 const jwt = require('jsonwebtoken')
 const passportJWT = require('passport-jwt')
@@ -44,13 +46,40 @@ const userController = {
           User.create({
             name: req.body.name,
             email: req.body.email,
-            password: bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10),null)
-          }).then(user=>{
-            return res.json({status:'success', message:'成功註冊帳號！'})
+            password: bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10), null)
+          }).then(user => {
+            return res.json({ status: 'success', message: '成功註冊帳號！' })
           })
         }
       })
     }
+  },
+  getUser: (req, res) => {
+    userService.getUser(req, res, (data) => res.json(data))
+  },
+  putUser: (req, res) => {
+    userService.putUser(req, res, (data) => res.json(data))
+  },
+  addFavorite: (req, res) => {
+    userService.addFavorite(req, res, (data) => res.json(data))
+  },
+  removeFavorite: (req, res) => {
+    userService.removeFavorite(req, res, (data) => res.json(data))
+  },
+  addLike: (req, res) => {
+    userService.addLike(req, res, (data) => res.json(data))
+  },
+  removeLike: (req, res) => {
+    userService.removeLike(req, res, (data) => res.json(data))
+  },
+  getTopUser: (req, res) => {
+    userService.getTopUser(req, res, (data) => res.json(data))
+  },
+  addFollowing: (req, res) => {
+    userService.addFollowing(req, res, (data) => res.json(data))
+  },
+  removeFollowing: (req, res) => {
+    userService.removeFollowing(req, res, (data) => res.json(data))
   }
 }
 
